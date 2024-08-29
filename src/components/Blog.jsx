@@ -1,8 +1,12 @@
-import { useState, useEffect } from 'react';
-import blogsHelper from '../services/blogs';
+import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { likeBlog, setLike } from '../reducers/likeReducer';
+import { removeBlogRedux } from '../reducers/bloglistReducer';
 
-const Blog = ({ blog, blogs, setBlogs, setLiked }) => {
+const Blog = ({ blog }) => {
   const [collapsed, setCollapse] = useState(true);
+  const blogs = useSelector(state => state.bloglist);
+  const dispatch = useDispatch();
 
   const toggleCollapse = () => {
     setCollapse(!collapsed);
@@ -14,23 +18,12 @@ const Blog = ({ blog, blogs, setBlogs, setLiked }) => {
       likes:blog.likes + 1
     };
     changedBlog.user = changedBlog.user.id;
-    const savedBlog = await blogsHelper.update(changedBlog);
-    const filtered = blogs.filter((blogEntry) => {
-      return blogEntry.id !== blog.id;
-    });
-
-    filtered.push(savedBlog);
-    setBlogs(filtered);
-    setLiked(true);
+    dispatch(likeBlog(blogs, changedBlog));
   };
 
-  const removeBlog = async () => {
+  const removeBlogListener = () => {
     if(window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)){
-      await blogsHelper.remove(blog.id);
-      const filtered = blogs.filter((blogEntry) => {
-        return blogEntry.id !== blog.id;
-      });
-      setBlogs(filtered);
+      dispatch(removeBlogRedux(blogs, blog));
     }
   };
 
@@ -41,6 +34,7 @@ const Blog = ({ blog, blogs, setBlogs, setLiked }) => {
       </div>
     );
   }else{
+    //console.log('user is', blog.user);
     return (
       <>
         {blog.title} {blog.author} <button onClick={toggleCollapse}>hide</button>
@@ -53,7 +47,7 @@ const Blog = ({ blog, blogs, setBlogs, setLiked }) => {
         <br />
         {blog.user.name}
         <br />
-        <button onClick={removeBlog}>remove</button>
+        <button onClick={removeBlogListener}>remove</button>
         <br />
       </>
     );

@@ -1,4 +1,7 @@
-const Notification = ({ displayMessage, success }) => {
+import { useSelector } from 'react-redux';
+
+const Notification = () => {
+  const { message, success } = useSelector(state => state.notification);
   const green = '#00FF00';
   const red = '#FF0000';
 
@@ -6,9 +9,9 @@ const Notification = ({ displayMessage, success }) => {
     color: `${(success)?green:red}`
   };
 
-  if(displayMessage === '')return null;
+  if(message === '')return null;
   return(
-    <h3 style={style}>{displayMessage} </h3>
+    <h3 style={style}>{message} </h3>
   );
 };
 

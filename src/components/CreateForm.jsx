@@ -1,12 +1,13 @@
 import { useState } from 'react';
-import blogService from '../services/blogs';
 
-import notifyHelper from '../../utils/notifyHelper';
+import { useDispatch } from 'react-redux';
+import { createBlog } from '../reducers/bloglistReducer';
 
-const CreateForm = ({ setSuccess, setDisplayMessage, blogs, setBlogs, formRef }) => {
+const CreateForm = ({ formRef }) => {
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
   const [url, setUrl] = useState('');
+  const dispatch = useDispatch();
 
   const create = async (event) => {
     event.preventDefault();
@@ -18,15 +19,13 @@ const CreateForm = ({ setSuccess, setDisplayMessage, blogs, setBlogs, formRef })
     };
 
     try{
-      const newBlogInDb = await blogService.add(newBlog);
+      dispatch(createBlog(newBlog));
       setTitle('');
       setAuthor('');
       setUrl('');
-      notifyHelper.addBlog(setDisplayMessage, setSuccess, newBlog);
-      setBlogs(blogs.concat(newBlogInDb));
       formRef.current.toggleVisibility();
     }catch(error){
-      notifyHelper.blogError(setDisplayMessage, setSuccess);
+      //notifyHelper.blogError(setDisplayMessage, setSuccess);
       console.log(error);
     }
   };

@@ -2,9 +2,12 @@ import loginService from '../services/login';
 import blogService from '../services/blogs';
 import { useState } from 'react';
 import Notification from './Notification';
-import notifyHelper from '../../utils/notifyHelper';
+import { useDispatch } from 'react-redux';
+import { setUser } from '../reducers/userReducer';
+import { setNotification } from '../reducers/notificationReducer';
 
-const LoginForm = ({ setUser, displayMessage, success, setSuccess, setDisplayMessage }) => {
+const LoginForm = () => {
+  const dispatch = useDispatch();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
@@ -20,20 +23,19 @@ const LoginForm = ({ setUser, displayMessage, success, setSuccess, setDisplayMes
         'loggedBlogappUser', JSON.stringify(user)
       );
 
-      setUser(user);
+      dispatch(setUser(user));
       setUsername('');
       setPassword('');
       blogService.setToken(user.token);
     }catch(exception){
-      console.log(exception);
-      notifyHelper.loginFail(setDisplayMessage, setSuccess);
+      dispatch(setNotification('invalid credentials', false, 5000));
     }
   };
 
   return(
     <form onSubmit= {handleLogin}>
       <h2>log in to application</h2>
-      <Notification displayMessage={displayMessage} success={success}/>
+      <Notification />
       <div>
         username: <input value={username} onChange= {(e) => {setUsername(e.target.value);}}/>
       </div>

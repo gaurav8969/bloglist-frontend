@@ -1,4 +1,8 @@
-const addBlog = (setDisplayMessage, setSuccess, newBlog) => {
+import { hide, notify } from '../src/reducers/notificationReducer';
+import { useDispatch } from 'react-redux';
+
+const useAddBlog = (setDisplayMessage, setSuccess, newBlog) => {
+  const dispatch = useDispatch();
   setSuccess(true);
   setDisplayMessage(`new blog ${newBlog.title} by ${newBlog.author} added`);
   setTimeout(() => {
@@ -23,5 +27,5 @@ const loginFail = (setDisplayMessage, setSuccess) => {
 };
 
 export default {
-  addBlog, blogError, loginFail
+  useAddBlog, blogError, loginFail
 };
